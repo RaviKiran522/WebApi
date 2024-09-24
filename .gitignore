@@ -1,0 +1,7 @@
+.vs/*
+/NZWalks/bin/*
+/NZWalks/obj/*
+/NZWalks/NZWalks.csproj
+/NZWalks/NZWalks.csproj.user
+/NZWalks/NZWalks.http
+NZWalks.API.sln
