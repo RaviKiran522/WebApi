@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NZwalks.Data;
 using NZwalks.Models.Domain;
@@ -12,28 +13,31 @@ namespace NZwalks.Controllers
     public class RegionsController : ControllerBase
     {
         private readonly IRegionRepository _regionRepository;
-        public RegionsController(IRegionRepository _regionRepository)
+        private readonly IMapper _mapper;
+        public RegionsController(IRegionRepository _regionRepository, IMapper _mapper)
         {
            this._regionRepository = _regionRepository;
+            this._mapper = _mapper;
         }
-
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
 
             var regions = await _regionRepository.GetAllAsync();
-            var regionDtos = new List<RegionDto>();
-            foreach (var region in regions)
-            {
-                regionDtos.Add(new RegionDto()
-                {
-                    Id = region.Id,
-                    Name = region.Name,
-                    Code = region.Code,
-                    RegionImageUrl = region.RegionImageUrl
-                });
-            }
+            //Convert Regions to RegionsDto model
+            var regionDtos = this._mapper.Map<List<RegionDto>>(regions);
+            //var regionDtos = new List<RegionDto>();
+            //foreach (var region in regions)
+            //{
+            //    regionDtos.Add(new RegionDto()
+            //    {
+            //        Id = region.Id,
+            //        Name = region.Name,
+            //        Code = region.Code,
+            //        RegionImageUrl = region.RegionImageUrl
+            //    });
+            //}
             return Ok(regionDtos);
         }
 
@@ -46,28 +50,33 @@ namespace NZwalks.Controllers
             {
                 return NotFound();
             }
-            return Ok(result);
+            //Convert Region model to RegionDto 
+            var resultDto = this._mapper.Map<RegionDto>(result);
+            return Ok(resultDto);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateRegionDto createRegionDto)
         {
-            var regionModel = new Region
-            {
-                Name = createRegionDto.Name,
-                Code = createRegionDto.Code,
-                RegionImageUrl = createRegionDto.RegionImageUrl
-            };
-
+            //Convert CreateRegionDto to Region domain model
+            var regionModel = this._mapper.Map<Region>(createRegionDto);
+            //var regionModel = new Region
+            //{
+            //    Name = createRegionDto.Name,
+            //    Code = createRegionDto.Code,
+            //    RegionImageUrl = createRegionDto.RegionImageUrl
+            //};
             var savedRegion = await _regionRepository.CreateAsync(regionModel);
 
-            var resultDto = new RegionDto
-            {
-                Id = savedRegion.Id,
-                Name = savedRegion.Name,
-                Code = savedRegion.Code,
-                RegionImageUrl = savedRegion.RegionImageUrl
-            };
+            //Convert Region domain model to RegionDto
+            var resultDto = this._mapper.Map<RegionDto>(savedRegion);
+            //var resultDto = new RegionDto
+            //{
+            //    Id = savedRegion.Id,
+            //    Name = savedRegion.Name,
+            //    Code = savedRegion.Code,
+            //    RegionImageUrl = savedRegion.RegionImageUrl
+            //};
 
             return Ok(resultDto);
         }
@@ -82,14 +91,10 @@ namespace NZwalks.Controllers
             {
                 return NotFound();
             }
+            //convert Region model to RegionDto
+            var resultDto = this._mapper.Map<RegionDto>(updatedData);
 
-            return Ok(new RegionDto
-            {
-                RegionImageUrl = updatedData.RegionImageUrl,
-                Name = updatedData.Name,
-                Code = updatedData.Code,
-                Id = updatedData.Id
-            });
+            return Ok(resultDto);
         }
 
         [HttpDelete]
@@ -101,7 +106,8 @@ namespace NZwalks.Controllers
             {
                 return NotFound();
             }
-            return Ok(result);
+            var resultDto = this._mapper.Map<RegionDto>(result);
+            return Ok(resultDto);
         }
     }
 }
