@@ -2,6 +2,7 @@
 using NZwalks.Data;
 using NZwalks.Models.Domain;
 using NZwalks.Models.DTOs;
+using System.Linq;
 
 namespace NZwalks.Repositories
 {
@@ -30,14 +31,27 @@ namespace NZwalks.Repositories
             return findItem;
         }
 
-        public async Task<List<Walk>> GetAllWalkAsync()
+        public async Task<List<Walk>> GetAllWalkAsync(string? FilterOn = null, string? FilterQuery = null, bool? isAssending = true, int? PageNumber = 1, int? PageSize = 1000)
         {
-            var WalkData = await _dbContext.Walks.ToListAsync();
-            if (WalkData.Count == 0)
+            var WalkData = _dbContext.Walks.AsQueryable();
+
+            //Filtering
+            if (!(string.IsNullOrEmpty(FilterOn) && string.IsNullOrEmpty(FilterQuery)))
             {
-                return new List<Walk>();
+                if(FilterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    WalkData = WalkData.Where(x => x.Name.Contains(FilterQuery));
+                }
             }
-            return WalkData;
+
+            //sorting
+            WalkData = isAssending == null ||isAssending == true ? WalkData.OrderBy(x => x.Name) : WalkData.OrderByDescending(x => x.Name);
+
+            //Pagination
+
+            var PageData = (PageNumber - 1) * PageSize ?? 1;
+            return await WalkData.Skip(PageData).Take(PageSize ?? 1000).ToListAsync();
+
         }
 
         public async Task<Walk?> GetWalkAsync(Guid id)

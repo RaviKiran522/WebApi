@@ -1,0 +1,13 @@
+Collaps & Expand:
+	- Ctrl + M + O (Collapse)
+	- Ctrl + M + P (Expand)
+
+Search file:
+	- Ctrl + ;
+
+Multi Select:
+	- Shift + Alt (press down arrow) (Same tab widht)
+	- Ctrl + Alt (select positions as your wish)
+
+Go to class:
+	Ctrl + F12

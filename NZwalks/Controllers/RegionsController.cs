@@ -58,6 +58,7 @@ namespace NZwalks.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateRegionDto createRegionDto)
         {
+            if (ModelState.IsValid) { 
             //Convert CreateRegionDto to Region domain model
             var regionModel = this._mapper.Map<Region>(createRegionDto);
             //var regionModel = new Region
@@ -79,22 +80,34 @@ namespace NZwalks.Controllers
             //};
 
             return Ok(resultDto);
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
         }
 
         [HttpPut]
         [Route("{id}")]
         public async Task<IActionResult> Update([FromBody] CreateRegionDto createRegionDto, [FromRoute] Guid id)
         {
-            var updatedData = await _regionRepository.UpdateAsync(createRegionDto,id);
-
-            if(updatedData == null)
+            if (ModelState.IsValid)
             {
-                return NotFound();
-            }
-            //convert Region model to RegionDto
-            var resultDto = this._mapper.Map<RegionDto>(updatedData);
+                var updatedData = await _regionRepository.UpdateAsync(createRegionDto, id);
 
-            return Ok(resultDto);
+                if (updatedData == null)
+                {
+                    return NotFound();
+                }
+                //convert Region model to RegionDto
+                var resultDto = this._mapper.Map<RegionDto>(updatedData);
+
+                return Ok(resultDto);
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
         }
 
         [HttpDelete]

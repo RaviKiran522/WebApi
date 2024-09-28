@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NZwalks.CustomActionFilter;
 using NZwalks.Models.Domain;
 using NZwalks.Models.DTOs;
 using NZwalks.Repositories;
@@ -20,6 +21,7 @@ namespace NZwalks.Controllers
         }
 
         [HttpPost]
+        [ValidateModelAttributes] // Custom validator, which validates ModelState Class
         public async Task<IActionResult> Create([FromBody] CreateWalkDto createWalkDto)
         {
             var walkData = this._mapper.Map<Walk>(createWalkDto);
@@ -28,9 +30,9 @@ namespace NZwalks.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] string? FilterOn, [FromQuery] string? FilterQuery, [FromQuery] bool? isAssending, [FromQuery] int? PageNumber, [FromQuery] int? PageSize)
         {
-            var data = await this._walkRepository.GetAllWalkAsync();
+            var data = await this._walkRepository.GetAllWalkAsync(FilterOn, FilterQuery, isAssending, PageNumber, PageSize);
 
             return Ok(this._mapper.Map<List<WalkDto>>(data));
         }
@@ -44,6 +46,7 @@ namespace NZwalks.Controllers
         }
 
         [HttpPut("{id}")]
+        [ValidateModelAttributes]
         public async Task<IActionResult> Update([FromBody] CreateWalkDto createWalkDto, [FromRoute] Guid id)
         {
 
