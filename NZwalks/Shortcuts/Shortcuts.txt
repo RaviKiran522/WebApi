@@ -11,3 +11,7 @@ Multi Select:
 
 Go to class:
 	Ctrl + F12
+
+Debugging:
+	Fn + F10 (next step)
+	Fn + F11 (goto function definition)
