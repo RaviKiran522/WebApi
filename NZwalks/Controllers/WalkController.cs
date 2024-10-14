@@ -23,6 +23,8 @@ namespace NZwalks.Controllers
 
         [HttpPost]
         [ValidateModelAttributes] // Custom validator, which validates ModelState Class
+        [Authorize(Roles = "Writer,Reader")]
+
         public async Task<IActionResult> Create([FromBody] CreateWalkDto createWalkDto)
         {
             var walkData = this._mapper.Map<Walk>(createWalkDto);
@@ -31,6 +33,7 @@ namespace NZwalks.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetAll([FromQuery] string? FilterOn, [FromQuery] string? FilterQuery, [FromQuery] bool? isAssending, [FromQuery] int? PageNumber, [FromQuery] int? PageSize)
         {
             var data = await this._walkRepository.GetAllWalkAsync(FilterOn, FilterQuery, isAssending, PageNumber, PageSize);
@@ -39,6 +42,7 @@ namespace NZwalks.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Reader")]
         public async Task<IActionResult> Get(Guid id)
         {
             var data = await this._walkRepository.GetWalkAsync(id);
@@ -48,6 +52,8 @@ namespace NZwalks.Controllers
 
         [HttpPut("{id}")]
         [ValidateModelAttributes]
+        [Authorize(Roles = "Writer")]
+
         public async Task<IActionResult> Update([FromBody] CreateWalkDto createWalkDto, [FromRoute] Guid id)
         {
 
@@ -57,6 +63,7 @@ namespace NZwalks.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var data = await this._walkRepository.DeleteWalkAsync(id);
