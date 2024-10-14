@@ -6,7 +6,7 @@ namespace NZwalks.Data
     public class NZWalksContext: DbContext
     {
         //ctrl + . => get import suggestions
-        public NZWalksContext(DbContextOptions dbContextOptions): base(dbContextOptions)
+        public NZWalksContext(DbContextOptions<NZWalksContext> dbContextOptions): base(dbContextOptions)
         {
             
         }
