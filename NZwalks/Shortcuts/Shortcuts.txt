@@ -15,3 +15,6 @@ Go to class:
 Debugging:
 	Fn + F10 (next step)
 	Fn + F11 (goto function definition)
+
+Surround with any blocker for selected content(Ex: try/catch):
+	Ctrl + k + s

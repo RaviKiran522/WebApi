@@ -8,11 +8,22 @@ using NZwalks.Repositories;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.FileProviders;
+using Serilog;
+using NZwalks.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+//for logging in console
+var logger = new LoggerConfiguration()
+    .WriteTo.Console()//to log in console
+    .WriteTo.File("Logs/NzWalks_Log.txt", rollingInterval: RollingInterval.Minute)// to log in File
+    .MinimumLevel.Information()
+    .CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
 
+
+// Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
@@ -96,7 +107,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseMiddleware<ExceptionHandlerMiddleware>();//global exception handling
 app.UseHttpsRedirection();
 app.UseAuthentication();//added for authentication
 app.UseAuthorization();
@@ -104,7 +115,7 @@ app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images")),
     RequestPath = "/Images"
-});
+}); //to make image as link to open
 app.MapControllers();
 
 app.Run();

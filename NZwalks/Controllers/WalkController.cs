@@ -6,6 +6,7 @@ using NZwalks.CustomActionFilter;
 using NZwalks.Models.Domain;
 using NZwalks.Models.DTOs;
 using NZwalks.Repositories;
+using System.Net;
 
 namespace NZwalks.Controllers
 {
@@ -33,11 +34,11 @@ namespace NZwalks.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Reader")]
+        //[Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetAll([FromQuery] string? FilterOn, [FromQuery] string? FilterQuery, [FromQuery] bool? isAssending, [FromQuery] int? PageNumber, [FromQuery] int? PageSize)
         {
             var data = await this._walkRepository.GetAllWalkAsync(FilterOn, FilterQuery, isAssending, PageNumber, PageSize);
-
+            throw new Exception("text exveption");
             return Ok(this._mapper.Map<List<WalkDto>>(data));
         }
 
