@@ -18,8 +18,12 @@ namespace NZwalks.Repositories
 
         public async Task<Region> CreateAsync(Region region)
         {
-            await this._nZWalksContext.Regions.AddAsync(region);
-            await this._nZWalksContext.SaveChangesAsync();
+            //save data with dbset methods
+            //await this._nZWalksContext.Regions.AddAsync(region);
+            //await this._nZWalksContext.SaveChangesAsync();
+
+            //insert data with stored procedure
+            this._nZWalksContext.Database.ExecuteSqlRaw("EXEC InsertRegion @Id = {0} , @Code = {1}, @Name = {2}, @RegionImageUrl = {3}", region.Id, region.Name, region.Code, region.RegionImageUrl != null ? region.RegionImageUrl : "");
             return region;
         }
 
@@ -37,7 +41,11 @@ namespace NZwalks.Repositories
 
         public async Task<List<Region>> GetAllAsync()
         {
-            var regionList = await this._nZWalksContext.Regions.ToListAsync();
+            //calling data with dbset methods
+            //var regionList = await this._nZWalksContext.Regions.ToListAsync();
+
+            //calling data with stored procedure
+            var regionList = this._nZWalksContext.Regions.FromSqlRaw("EXEC GetAllRegions").ToList();
             if (regionList.Count == 0)
             {
                 return new List<Region>();

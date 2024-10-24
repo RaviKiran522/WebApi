@@ -1,0 +1,5 @@
+ALTER PROCEDURE GetAllRegions
+AS
+BEGIN
+SELECT * FROM Regions;
+END;

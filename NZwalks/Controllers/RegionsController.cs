@@ -31,8 +31,11 @@ namespace NZwalks.Controllers
         {
             iLogger.LogInformation("Get all region action method was invocked");
             var regions = await _regionRepository.GetAllAsync();
-            //Convert Regions to RegionsDto model
+
+            //Convert Regions to RegionsDto model with mapper
             var regionDtos = this._mapper.Map<List<RegionDto>>(regions);
+
+            //Convert Regions to RegionsDto model without mapper
             //var regionDtos = new List<RegionDto>();
             //foreach (var region in regions)
             //{
@@ -65,11 +68,12 @@ namespace NZwalks.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Writer,Reader")]
+        //[Authorize(Roles = "Writer,Reader")]
 
         public async Task<IActionResult> Create([FromBody] CreateRegionDto createRegionDto)
         {
             if (ModelState.IsValid) { 
+            
             //Convert CreateRegionDto to Region domain model
             var regionModel = this._mapper.Map<Region>(createRegionDto);
             //var regionModel = new Region
@@ -78,6 +82,7 @@ namespace NZwalks.Controllers
             //    Code = createRegionDto.Code,
             //    RegionImageUrl = createRegionDto.RegionImageUrl
             //};
+            regionModel.Id = Guid.NewGuid();//this is added due to stored proc implementation, Id is not generating so...
             var savedRegion = await _regionRepository.CreateAsync(regionModel);
 
             //Convert Region domain model to RegionDto
